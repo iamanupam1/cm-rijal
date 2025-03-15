@@ -4,21 +4,22 @@ import { ArrowLeft, Filter, Calendar, ChevronDown, X, Tag } from 'lucide-react';
 import Link from 'next/link';
 import { latestPosts } from '@/constants';
 import ArticleCard from '../components/common/article-card';
+import { Post } from '@/types';
 
 const CategoryPage = () => {
-  const [currentCategory, setCurrentCategory] = useState('Technology');
+  const [currentCategory, setCurrentCategory] = useState<string>('Technology');
   const categories = [...new Set(latestPosts.map(post => post.category))];
 
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [sortOption, setSortOption] = useState('latest');
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
 
   useEffect(() => {
-    let filteredPosts = latestPosts.filter(post => post.category === currentCategory);
+    const filteredPosts = latestPosts.filter(post => post.category === currentCategory);
     
     filteredPosts.sort((a, b) => {
       if (sortOption === 'latest') {
-        return new Date(b.date) - new Date(a.date);
+        return new Date(b.date).getTime() - new Date(a.date).getTime();
       } else if (sortOption === 'popular') {
         return b.likes - a.likes;
       }
@@ -28,14 +29,14 @@ const CategoryPage = () => {
     setPosts(filteredPosts);
   }, [currentCategory, sortOption]);
 
-  const getCategoryColors = (category) => {
+  const getCategoryColors = (category:string) => {
     const colors = {
       Technology: { bg: 'from-purple-500 to-indigo-600', icon: '💻' },
       Design: { bg: 'from-blue-500 to-cyan-600', icon: '🎨' },
       Lifestyle: { bg: 'from-green-500 to-emerald-600', icon: '🌿' },
       Business: { bg: 'from-amber-500 to-orange-600', icon: '📊' },
     };
-    return colors[category] || { bg: 'from-indigo-500 to-purple-600', icon: '📝' };
+    return (colors as Record<string, { bg: string; icon: string; }>)[category] || { bg: 'from-indigo-500 to-purple-600', icon: '📝' };
   };
 
   const categoryColors = getCategoryColors(currentCategory);

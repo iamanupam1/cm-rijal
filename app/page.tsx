@@ -83,7 +83,7 @@ const Homepage = () => {
               Browse by Category
             </h2>
             <p className="text-slate-500 mt-2">
-              Find exactly what you're looking for
+              Find exactly what you&apos;re looking for
             </p>
           </div>
 

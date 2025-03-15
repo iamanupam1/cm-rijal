@@ -1,6 +1,5 @@
 import React from 'react';
-import { Mail, MapPin, Phone, Github, Twitter, Linkedin, Facebook, Youtube } from 'lucide-react';
-import Link from 'next/link';
+import { Twitter,  Facebook, Youtube } from 'lucide-react';
 import Image from 'next/image';
 import ContactPage from '../components/contact-form';
 
@@ -41,7 +40,7 @@ const AboutPage = () => {
               <p className="text-indigo-600 font-medium mb-6">Computer Science Department</p>
               
               <p className="text-slate-600 mb-6">
-                When I'm not in the classroom or lab, I enjoy hiking, photography, and exploring the intersections of technology and art. I believe that the most innovative solutions come from interdisciplinary thinking and collaboration.
+                When I&apos;m not in the classroom or lab, I enjoy hiking, photography, and exploring the intersections of technology and art. I believe that the most innovative solutions come from interdisciplinary thinking and collaboration.
               </p>
               
               <div className="flex items-center gap-4 mb-8">

@@ -48,7 +48,7 @@ const ContactForm = () => {
               Message Sent!
             </h3>
             <p className="text-green-700 mb-4">
-              Thank you for reaching out. We'll get back to you soon.
+              Thank you for reaching out. We&apos;ll get back to you soon.
             </p>
             <button
               onClick={() =>

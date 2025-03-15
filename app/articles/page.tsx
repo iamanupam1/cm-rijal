@@ -209,7 +209,7 @@ const ArticleLanding = () => {
             
             {searchTerm && (
               <span className="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-sm flex items-center">
-                "{searchTerm}"
+                &quot;{searchTerm}&quot;
                 <button onClick={() => setSearchTerm('')} className="ml-2">
                   <X size={14} />
                 </button>
@@ -259,7 +259,7 @@ const ArticleLanding = () => {
           <div className="text-center py-16">
             <div className="text-5xl mb-4">🔍</div>
             <h3 className="text-2xl font-bold text-slate-700 mb-2">No articles found</h3>
-            <p className="text-slate-500">Try adjusting your search or filter to find what you're looking for.</p>
+            <p className="text-slate-500">Try adjusting your search or filter to find what you&apos;re looking for.</p>
             <button 
               className="mt-6 bg-indigo-600 text-white py-2 px-6 rounded-md hover:bg-indigo-700 transition-colors"
               onClick={() => {
