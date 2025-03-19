@@ -1,11 +1,19 @@
 import { Schema, model, models } from 'mongoose';
 
+interface ITag{
+  _id?: string;
+  name: string;
+}
+
 export interface IBlog {
   _id?: string;
   title: string;
   slug: string;
+  category: string;
+  tags: ITag[];
   content: string;
   excerpt: string;
+  like_count: string;
   featured_image: string;
   published: boolean;
   publishedAt?: Date;

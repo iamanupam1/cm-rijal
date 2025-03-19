@@ -25,7 +25,7 @@ const AboutPage = () => {
             <div className="md:w-2/5">
               <div className="h-full relative">
                 <Image 
-                  src= "https://picsum.photos/500/300" 
+                  src= "/image.jpg" 
                   alt="Professor Thomas Reynolds" 
                   width={600}
                   height={800}

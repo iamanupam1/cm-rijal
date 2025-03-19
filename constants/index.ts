@@ -1,41 +1,41 @@
-import { Category, ColorPallete, Post } from "@/types";
+import { Category, ColorPallete, IBlog } from "@/types";
 
-export const featuredPosts: Post[] = [
+export const featuredPosts: IBlog[] = [
   {
-    id: 1,
-    title: "The Future of Web Development in 2025",
-    excerpt:
-      "Exploring the latest trends and technologies shaping the web development landscape.",
+    _id: "112",
+    title: "Getting Started with React",
+    slug: "getting-started-with-react",
     category: "Technology",
-    imageUrl: "https://picsum.photos/500/300",
-    author: "Alex Johnson",
-    date: "March 10, 2025",
-    likes: 142,
-    comments: 38,
+    tags: [
+      { _id: "1", name: "React" },
+      { _id: "2", name: "JavaScript" },
+    ],
+    content:
+      "<p>React is a JavaScript library for building user interfaces...</p>",
+    excerpt: "Introduction to React and its core concepts",
+    like_count: "42",
+    featured_image: "/api/placeholder/800/400",
+    published: true,
+    publishedAt: new Date("2025-02-15"),
+    createdAt: new Date("2025-02-10"),
+    updatedAt: new Date("2025-02-15"),
   },
   {
-    id: 2,
-    title: "Mindfulness Practices for Creative Professionals",
-    excerpt:
-      "How to incorporate mindfulness into your creative workflow for better results.",
-    category: "Lifestyle",
-    imageUrl: "https://picsum.photos/500/300",
-    author: "Sarah Williams",
-    date: "March 8, 2025",
-    likes: 97,
-    comments: 24,
-  },
-  {
-    id: 3,
-    title: "Sustainable Design: Creating Beautiful Spaces with Less",
-    excerpt:
-      "Practical approaches to environmentally conscious design that doesnt sacrifice aesthetics.",
-    category: "Design",
-    imageUrl: "https://picsum.photos/500/300",
-    author: "Michael Chen",
-    date: "March 5, 2025",
-    likes: 118,
-    comments: 32,
+    _id: "221",
+    title: "Modern CSS Techniques",
+    slug: "modern-css-techniques",
+    category: "Technology",
+    tags: [
+      { _id: "3", name: "CSS" },
+      { _id: "4", name: "Web Design" },
+    ],
+    content: "<p>CSS has evolved significantly in recent years...</p>",
+    excerpt: "Exploring the latest CSS features and best practices",
+    like_count: "38",
+    featured_image: "/api/placeholder/800/400",
+    published: false,
+    createdAt: new Date("2025-03-05"),
+    updatedAt: new Date("2025-03-08"),
   },
 ];
 
@@ -57,53 +57,41 @@ export const categories: Category[] = [
   { name: "Health", count: 7, color: "bg-teal-100 text-teal-600" },
 ];
 
-export const latestPosts: Post[] = [
+export const latestPosts: IBlog[] = [
   {
-    id: 1,
-    title: "The Future of Web Development in 2025",
-    excerpt:
-      "Exploring the latest trends and technologies shaping the web development landscape.",
+    _id: "1",
+    title: "Getting Started with React",
+    slug: "getting-started-with-react",
     category: "Technology",
-    imageUrl: "https://picsum.photos/500/300",
-    author: "Alex Johnson",
-    date: "March 10, 2025",
-    likes: 142,
-    comments: 38,
+    tags: [
+      { _id: "1", name: "React" },
+      { _id: "2", name: "JavaScript" },
+    ],
+    content:
+      "<p>React is a JavaScript library for building user interfaces...</p>",
+    excerpt: "Introduction to React and its core concepts",
+    like_count: "42",
+    featured_image: "/api/placeholder/800/400",
+    published: true,
+    publishedAt: new Date("2025-02-15"),
+    createdAt: new Date("2025-02-10"),
+    updatedAt: new Date("2025-02-15"),
   },
   {
-    id: 2,
-    title: "Mindfulness Practices for Creative Professionals",
-    excerpt:
-      "How to incorporate mindfulness into your creative workflow for better results.",
-    category: "Lifestyle",
-    imageUrl: "https://picsum.photos/500/300",
-    author: "Sarah Williams",
-    date: "March 8, 2025",
-    likes: 97,
-    comments: 24,
-  },
-  {
-    id: 3,
-    title: "Sustainable Design: Creating Beautiful Spaces with Less",
-    excerpt:
-      "Practical approaches to environmentally conscious design that doesnt sacrifice aesthetics.",
-    category: "Design",
-    imageUrl: "https://picsum.photos/500/300",
-    author: "Michael Chen",
-    date: "March 5, 2025",
-    likes: 118,
-    comments: 32,
-  },
-  {
-    id: 4,
-    title: "Sustainable Design: Creating Beautiful Spaces with Less",
-    excerpt:
-      "Practical approaches to environmentally conscious design that doesnt sacrifice aesthetics.",
-    category: "Design",
-    imageUrl: "https://picsum.photos/500/300",
-    author: "Michael Chen",
-    date: "March 5, 2025",
-    likes: 118,
-    comments: 32,
+    _id: "2",
+    title: "Modern CSS Techniques",
+    slug: "modern-css-techniques",
+    category: "Technology",
+    tags: [
+      { _id: "3", name: "CSS" },
+      { _id: "4", name: "Web Design" },
+    ],
+    content: "<p>CSS has evolved significantly in recent years...</p>",
+    excerpt: "Exploring the latest CSS features and best practices",
+    like_count: "38",
+    featured_image: "/api/placeholder/800/400",
+    published: false,
+    createdAt: new Date("2025-03-05"),
+    updatedAt: new Date("2025-03-08"),
   },
 ];

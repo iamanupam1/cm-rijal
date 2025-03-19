@@ -1,8 +1,20 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  compilerOptions: {
+    strict: true,
+    skipLibCheck: true,
+    moduleResolution: "node",
+  },
   images: {
-    domains: ["res.cloudinary.com", "picsum.photos"],
+    remotePatterns: [
+      {
+        hostname: "res.cloudinary.com",
+      },
+      {
+        hostname: "picsum.photos",
+      },
+    ],
   },
 };
 
