@@ -516,7 +516,8 @@ const BlogAdminDashboard = () => {
                         defaultValue={
                           selectedCategory ? selectedCategory : null
                         }
-                        createFunction={handleCategoryCreate}
+                        createFunction={(inputValue) => 
+                          handleCategoryCreate(inputValue as unknown as { label: string; value: string })}
                         closeMenuOnSelect={true}
                       />
                     </div>
@@ -531,7 +532,9 @@ const BlogAdminDashboard = () => {
                         isMultiple={true}
                         setSelectValue={setSelectedTags}
                         defaultValue={selectedTags}
-                        createFunction={handleTagCreate}
+                        createFunction={(inputValue) => 
+                          handleTagCreate(inputValue as unknown as { label: string; value: string })}
+                        closeMenuOnSelect={true}
                       />
                     </div>
 

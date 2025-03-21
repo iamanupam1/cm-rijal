@@ -140,7 +140,7 @@ const ArticleLanding = () => {
             />
             <select
               className="w-full pl-10 pr-4 py-3 rounded-md border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 appearance-none bg-white text-slate-600"
-              value={selectedCategory}
+              value={selectedTag}
               onChange={(e) => setSelectedTag(e.target.value)}
             >
               <option value="">Tags</option>
@@ -200,9 +200,9 @@ const ArticleLanding = () => {
                   onChange={(e) => setSelectedCategory(e.target.value)}
                 >
                   <option value="">All Categories</option>
-                  {categories.map((category) => (
-                    <option key={category} value={category}>
-                      {category}
+                  {categories?.map((category) => (
+                    <option key={category?.id} value={category?.id}>
+                      {category?.name}
                     </option>
                   ))}
                 </select>
@@ -219,9 +219,9 @@ const ArticleLanding = () => {
                   onChange={(e) => setSelectedCategory(e.target.value)}
                 >
                   <option value="">Tags</option>
-                  {categories.map((category) => (
-                    <option key={category} value={category}>
-                      {category}
+                  {tags?.map((tag) => (
+                    <option key={tag?.id} value={tag.id}>
+                      {tag?.name}
                     </option>
                   ))}
                 </select>
@@ -307,7 +307,7 @@ const ArticleLanding = () => {
         <ArticleSkeleton />
       ) : (
         <div className="container mx-auto px-4 pb-16">
-          {posts?.length > 0 ? (
+          {posts && posts?.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {posts?.map((post) => (
                 <ArticleCard

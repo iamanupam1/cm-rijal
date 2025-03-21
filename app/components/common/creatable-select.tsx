@@ -1,6 +1,5 @@
-
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import CreatableSelect from "react-select/creatable";
 import slugify from "slugify";
 
@@ -10,7 +9,14 @@ const CreatableSelectComponent = ({
   setSelectValue,
   defaultValue = [],
   createFunction,
-  closeMenuOnSelect=false
+  closeMenuOnSelect = false,
+}: {
+  defaultOptions: any[];
+  isMultiple: boolean;
+  setSelectValue: Dispatch<SetStateAction<any>>; 
+  defaultValue: any;
+  createFunction: (inputValue: string) => void;
+  closeMenuOnSelect: boolean;
 }) => {
   const [options, setOptions] = useState(defaultOptions);
   const [value, setValue] = useState(defaultValue);
@@ -20,7 +26,7 @@ const CreatableSelectComponent = ({
     setValue(defaultValue);
   }, [defaultValue]);
 
-  const handleCreate = async (inputValue:string) => {
+  const handleCreate = async (inputValue: string) => {
     if (!inputValue) return;
     const optionList = {
       label: inputValue,

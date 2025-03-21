@@ -1,13 +1,15 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/prisma";
-import { RouteModuleHandleContext } from "next/dist/server/route-modules/route-module";
 
 export async function GET(
-  request: Request,
-  context: RouteModuleHandleContext
-)  {
-  const { params } = await context.params;
-  const { id } = params;
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  if (!id) {
+    return new Response("Blog ID is required", { status: 400 });
+  }
+
   try {
     const blog = await db.blog.findUnique({
       where: {
@@ -16,14 +18,12 @@ export async function GET(
     });
 
     if (!blog) {
-      return NextResponse.json(
-        { message: "Blog not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ message: "Blog not found" }, { status: 404 });
     }
 
     return NextResponse.json(blog);
   } catch (error) {
+    console.error("Error fetching blog:", error);
     return NextResponse.json(
       { message: "Internal server error" },
       { status: 500 }
