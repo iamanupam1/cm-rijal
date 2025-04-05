@@ -1,54 +1,71 @@
-"use client";
-import React, { useEffect, useState } from "react";
 import { ArrowRight, Tag } from "lucide-react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import ArticleCard from "./components/common/article-card";
-import { fetchBlog } from "@/actions/blog";
-import { IBlog, ICategory } from "@/types";
-import { getCategory } from "@/actions/category";
+import { client } from "../sanity/lib/client";
+import { SanityDocument } from "next-sanity";
 import { COLOR_PALLETE } from "@/constants";
 
-const Homepage = () => {
-  const router = useRouter();
-  const [featured, setFeatured] = useState<IBlog[]>();
-  const [latest, setLatest] = useState<IBlog[]>();
-  const [categories, setCategories] = useState<ICategory[]>();
+const FEAT_POSTS_QUERY = `*[
+  _type == "post" && defined(slug.current) && featured == true
+] | order(publishedAt desc)[0...3] {
+  _id,
+  title,
+  slug,
+  publishedAt,
+  body,
+  excerpt,
+  likeCount,
+  mainImage {
+    asset->{
+      _id,
+      url
+    },
+    alt
+  },
+  categories[]->{
+    _id,
+    title
+  }
+}`;
 
-  useEffect(() => {
-    const getBlog = async () => {
-      try {
-        const response = await fetchBlog(
-          "size=3&isFeatured=true&isPublished=true"
-        );
-        setFeatured(response);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
-    const getLatestBlog = async () => {
-      try {
-        const response = await fetchBlog(
-          "size=6&isFeatured=false&isPublished=true"
-        );
-        setLatest(response);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
-    const getCategories = async () => {
-      try {
-        const response = await getCategory();
-        setCategories(response);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
-    getBlog();
-    getLatestBlog();
-    getCategories();
-  }, []);
+const POSTS_QUERY = `*[
+  _type == "post" && defined(slug.current) && featured == false
+] | order(publishedAt desc)[0...6] {
+  _id,
+  title,
+  slug,
+  publishedAt,
+  body,
+  likeCount,
+  excerpt,
+  mainImage {
+    asset->{
+      _id,
+      url
+    },
+    alt
+  },
+  categories[]->{
+    _id,
+    title
+  }
+}`;
 
+const CATEGORY_QUERY = `*[
+  _type == "category" 
+] | order(publishedAt desc)[0...12] {
+  _id,
+  title,
+  "postCount": count(*[_type == "post" && references(^._id)])
+}`;
+
+const options = { next: { revalidate: 30 } };
+
+const Homepage = async () => {
+  const featuredPosts = await client.fetch<SanityDocument[]>(FEAT_POSTS_QUERY, {}, options);
+  const posts = await client.fetch<SanityDocument[]>(POSTS_QUERY, {}, options);
+  const categories = await client.fetch<SanityDocument[]>(CATEGORY_QUERY, {}, options);
+  console.log("categories", posts);
   return (
     <div className="my-5">
       <section className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-20">
@@ -62,25 +79,25 @@ const Homepage = () => {
               lifestyle, and more.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <button
+              <Link
                 className="cursor-pointer bg-white text-indigo-600 font-medium py-3 px-6 rounded-md hover:bg-opacity-90 transition-all flex items-center justify-center"
-                onClick={() => router.push("/articles")}
+                href={"/articles"}
               >
                 Start Reading <ArrowRight size={18} className="ml-2" />
-              </button>
-              <button
+              </Link>
+              <Link
                 className="cursor-pointer bg-indigo-700 bg-opacity-40 text-white font-medium py-3 px-6 rounded-md hover:bg-opacity-60 transition-all"
-                onClick={() => router.push("/categories")}
+                href={"/categories"}
               >
                 Browse Categories
-              </button>
+              </Link>
             </div>
           </div>
         </div>
       </section>
 
       {/* Featured Posts */}
-      {featured?.length ? (
+      {featuredPosts?.length ? (
         <section className="py-16 bg-white">
           <div className="container mx-auto px-4 md:px-6">
             <div className="flex justify-between items-end mb-10">
@@ -101,13 +118,7 @@ const Homepage = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {featured?.map((post) => (
-                <ArticleCard
-                  post={post}
-                  key={post.id}
-                  categories={categories}
-                />
-              ))}
+              {featuredPosts?.map((post) => <ArticleCard post={post} key={post._id} />)}
             </div>
             <div className="mt-8 text-center md:hidden">
               <Link
@@ -144,12 +155,12 @@ const Homepage = () => {
 
                 return (
                   <div
-                    key={category.name}
+                    key={category.title}
                     className={`${colorPalette.background} ${colorPalette.text} rounded-lg py-6 px-4 text-center hover:shadow-md transition-all cursor-pointer`}
                   >
                     <Tag className="mx-auto mb-3" />
-                    <h3 className="font-medium mb-1">{category.name}</h3>
-                    <p className="text-sm opacity-80">20 posts</p>
+                    <h3 className="font-medium mb-1">{category.title}</h3>
+                    <p className="text-sm opacity-80">{category.postCount} posts</p>
                   </div>
                 );
               })}
@@ -161,7 +172,7 @@ const Homepage = () => {
       )}
 
       {/* Latest Posts */}
-      {latest?.length ? (
+      {posts?.length ? (
         <section className="py-16 bg-white">
           <div className="container mx-auto px-4 md:px-6">
             <div className="flex justify-between items-end mb-10">
@@ -182,13 +193,7 @@ const Homepage = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {latest?.map((post) => (
-                <ArticleCard
-                  post={post}
-                  key={post.id}
-                  categories={categories}
-                />
-              ))}
+              {posts?.map((post) => <ArticleCard post={post} key={post._id} />)}
             </div>
             <div className="mt-8 text-center md:hidden">
               <Link

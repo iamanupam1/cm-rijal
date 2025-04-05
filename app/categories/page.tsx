@@ -1,77 +1,81 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { ArrowLeft, Filter, ChevronDown, X, Tag, SortAsc } from "lucide-react";
+import { ArrowLeft, Filter, ChevronDown, X, SortAsc } from "lucide-react";
 import Link from "next/link";
 import ArticleCard from "../components/common/article-card";
-import { IBlog, ICategory, ITag } from "@/types";
-import { getTag } from "@/actions/tag";
-import { getCategory } from "@/actions/category";
-import { fetchBlog } from "@/actions/blog";
 import ArticleSkeleton from "../components/common/article-skeleton";
 import HeaderSkeleton from "../components/common/article-header-skeleton";
+import { client } from "../../sanity/lib/client";
+import { groq, SanityDocument } from "next-sanity";
 
 const CategoryPage = () => {
-  const [posts, setPosts] = useState<IBlog[]>([]);
-  const [categories, setCategories] = useState<ICategory[]>();
-  const [tags, setTags] = useState<ITag[]>();
+  const [posts, setPosts] = useState<SanityDocument[]>([]);
+  const [categories, setCategories] = useState<SanityDocument[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedTag, setSelectedTag] = useState("");
   const [sortOption, setSortOption] = useState("latest");
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const [isAPIFetching, setIsAPIFetching] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const getCategories = async () => {
+    const fetchInitialData = async () => {
+      setIsLoading(true);
       try {
-        setIsLoading(true);
-        const response = await getCategory();
-        setCategories(response);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
-    const getTags = async () => {
-      try {
-        const response = await getTag();
-        setTags(response);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
+        const categoriesQuery = groq`*[_type == "category"]`;
 
-      setIsLoading(false);
+        const [categoriesResult] = await Promise.all([
+          client.fetch(categoriesQuery),
+        ]);
+
+        setCategories(categoriesResult);
+        setSelectedCategory(categoriesResult?.[0]?._id ?? "N/A");
+      } catch (error) {
+        console.error("Error fetching initial data:", error);
+      } finally {
+        setIsLoading(false);
+      }
     };
-    getCategories();
-    getTags();
+    fetchInitialData();
   }, []);
 
   useEffect(() => {
-    setSelectedCategory(categories?.[0]?.id ?? "N/A");
-  }, [categories]);
+    const fetchPosts = async () => {
+      if (!selectedCategory) return;
 
-  useEffect(() => {
-    const getBlog = async () => {
-      if (selectedCategory === "N/A") return;
+      setIsAPIFetching(true);
       try {
-        setIsAPIFetching(true);
-        let queryParams = "size=12&isPublished=true";
+        // Keep the existing sort option logic
+        let order =
+          sortOption === "popular"
+            ? "| order(likeCount asc)"
+            : "| order(_createdAt desc)";
 
-        if (selectedCategory) {
-          queryParams += `&category=${selectedCategory}`;
+        // Keep the existing category filter logic
+        let filter = `_type == "post" && '${selectedCategory}' in categories[]->_id`;
+
+        // Building the query without using groq template literal tag
+        const query = `*[${filter}] ${order} {
+           _id,
+        title,
+        slug,
+        publishedAt,
+        body,
+        likeCount,
+        excerpt,
+        mainImage {
+          asset->{
+            _id,
+            url
+          },
+          alt
+        },
+        categories[]->{
+          _id,
+          title
         }
-
-        if (selectedTag) {
-          queryParams += `&tag=${selectedTag}`;
-        }
-
-        if (sortOption === "popular") {
-          queryParams += "&mostLiked=true";
-        } else {
-          queryParams += "&latest=true";
-        }
-
-        const response = await fetchBlog(queryParams);
-        setPosts(response);
+        }`;
+        const postsResult = await client.fetch(query);
+        setPosts(postsResult);
       } catch (error) {
         console.error("Error fetching blog posts:", error);
       } finally {
@@ -79,9 +83,10 @@ const CategoryPage = () => {
       }
     };
 
-    getBlog();
-  }, [selectedCategory, selectedTag, sortOption]);
+    fetchPosts();
+  }, [selectedCategory, sortOption]);
 
+  console.log("posts", posts);
   return (
     <div className="my-5">
       {isLoading ? (
@@ -104,8 +109,8 @@ const CategoryPage = () => {
               <div className="flex items-center gap-4">
                 <div>
                   <h1 className="text-4xl font-bold mb-2">
-                    {categories?.find((item) => item.id === selectedCategory)
-                      ?.name ?? "N/A"}
+                    {categories?.find((item) => item._id === selectedCategory)
+                      ?.title ?? "N/A"}
                   </h1>
                   <p className="text-lg opacity-90">
                     {posts.length} article{posts.length !== 1 ? "s" : ""} in
@@ -127,8 +132,8 @@ const CategoryPage = () => {
               onChange={(e) => setSelectedCategory(e.target.value)}
             >
               {categories?.map((category) => (
-                <option key={category?.id} value={category?.id}>
-                  {category?.name}
+                <option key={category?._id} value={category?._id}>
+                  {category?.title}
                 </option>
               ))}
             </select>
@@ -139,32 +144,13 @@ const CategoryPage = () => {
           </div>
 
           <div className="hidden md:flex relative min-w-[200px]">
-            <Tag
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"
-              size={18}
-            />
-            <select
-              className="w-full pl-10 pr-4 py-3 rounded-md border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 appearance-none bg-white text-slate-600"
-              value={""}
-              onChange={(e) => setSelectedTag(e.target.value)}
-            >
-              <option value="">Tags</option>
-              {tags?.map((tag) => (
-                <option key={tag?.id} value={tag?.id}>
-                  {tag?.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="hidden md:flex relative min-w-[200px]">
             <SortAsc
               className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"
               size={18}
             />
             <select
               className="w-full pl-10 pr-4 py-3 rounded-md border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 appearance-none bg-white text-slate-600"
-              value={""}
+              value={sortOption}
               onChange={(e) => setSortOption(e.target.value)}
             >
               <option value="latest">Latest First</option>
@@ -204,7 +190,6 @@ const CategoryPage = () => {
                   <option value="popular">Most Popular</option>
                 </select>
               </div>
-
               <button
                 className="w-full bg-indigo-600 text-white py-3 px-4 rounded-md hover:bg-indigo-700 transition-colors"
                 onClick={() => setIsFilterDrawerOpen(false)}
@@ -221,13 +206,7 @@ const CategoryPage = () => {
         <div className="container mx-auto px-4 pb-16">
           {posts?.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {posts?.map((post) => (
-                <ArticleCard
-                  key={post.id}
-                  post={post}
-                  categories={categories}
-                />
-              ))}
+              {posts?.map((post) => <ArticleCard key={post._id} post={post} />)}
             </div>
           ) : (
             <div className="text-center py-16">

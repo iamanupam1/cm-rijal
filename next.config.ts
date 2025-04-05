@@ -15,10 +15,7 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
-        hostname: "res.cloudinary.com",
-      },
-      {
-        hostname: "picsum.photos",
+        hostname: "cdn.sanity.io",
       },
     ],
   },

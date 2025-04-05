@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { Search } from "lucide-react";
 import { useState } from "react";
 import { usePathname } from 'next/navigation';
 
@@ -44,28 +43,6 @@ const Navbar = () => {
           ))}
         </div>
 
-        {/* Search Field */}
-        <div className="flex items-center space-x-4">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search..."
-              className="pl-10 pr-4 py-2 border rounded-md text-slate-700 focus:outline-none focus:ring focus:ring-indigo-300"
-            />
-            <Search
-              size={20}
-              className="absolute left-3 top-2.5 text-slate-500"
-            />
-          </div>
-
-          {/* Mobile Menu Toggle */}
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 text-slate-500 hover:text-indigo-600 transition-colors"
-          >
-            ☰
-          </button>
-        </div>
       </div>
 
       {/* Mobile Menu */}
